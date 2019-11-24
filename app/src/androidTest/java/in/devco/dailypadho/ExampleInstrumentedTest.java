@@ -1,4 +1,4 @@
-package in.devco.newsmachine;
+package in.devco.dailypadho;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("in.devco.newsmachine", appContext.getPackageName());
+        assertEquals("in.devco.dailypadho", appContext.getPackageName());
     }
 }

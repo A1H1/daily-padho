@@ -1,4 +1,4 @@
-package in.devco.newsmachine;
+package in.devco.dailypadho;
 
 import org.junit.Test;
 

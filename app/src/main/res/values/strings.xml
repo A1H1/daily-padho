@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">News Machine</string>
+    <string name="app_name">Daily Padho</string>
+    <string name="article_image">Article Image</string>
 </resources>
