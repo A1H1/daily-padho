@@ -28,8 +28,13 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         articles = new ArrayList<>();
     }
 
-    public void update(List<Article> articles) {
+    public void add(List<Article> articles) {
         this.articles = articles;
+        notifyDataSetChanged();
+    }
+
+    public void update(List<Article> articles) {
+        this.articles.addAll(articles);
         notifyDataSetChanged();
     }
 

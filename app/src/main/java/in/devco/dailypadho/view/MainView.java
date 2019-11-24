@@ -6,4 +6,5 @@ import in.devco.dailypadho.model.Article;
 
 public interface MainView {
     void loadArticles(List<Article> articles);
+    void loadMoreArticles(List<Article> articles);
 }

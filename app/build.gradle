@@ -15,6 +15,14 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", '"https://newsapi.org"'
+            buildConfigField "String", "APP_KEY", '"aa171b6eb7364eb796bab5f173e34358"'
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", '"https://newsapi.org"'
+            buildConfigField "String", "APP_KEY", '"aa171b6eb7364eb796bab5f173e34358"'
         }
     }
     compileOptions {

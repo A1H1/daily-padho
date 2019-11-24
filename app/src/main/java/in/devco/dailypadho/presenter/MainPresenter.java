@@ -1,51 +1,54 @@
 package in.devco.dailypadho.presenter;
 
 import in.devco.dailypadho.model.ArticleResponse;
-import in.devco.dailypadho.network.API;
+import in.devco.dailypadho.network.APIClient;
+import in.devco.dailypadho.network.APIService;
 import in.devco.dailypadho.view.MainView;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainPresenter {
+public class MainPresenter implements Callback<ArticleResponse> {
+    private boolean loadMore = false;
+    private int page = 1;
+    private int totalPost;
+    private String countryCode;
+
     private MainView view;
-    private API api;
+    private APIService api;
 
-    public MainPresenter(MainView view) {
+    public MainPresenter(MainView view, String countryCode) {
         this.view = view;
+        this.countryCode = countryCode;
 
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.level(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://newsapi.org")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        api = retrofit.create(API.class);
-
+        api = APIClient.getClient().create(APIService.class);
     }
 
-
     public void fetchAllArticles() {
-        Call<ArticleResponse> call = api.getArticles("in");
+        Call<ArticleResponse> call = api.getArticles(countryCode, 10, page);
+        call.enqueue(this);
+    }
 
-        call.enqueue(new Callback<ArticleResponse>() {
-            @Override
-            public void onResponse(Call<ArticleResponse> call, Response<ArticleResponse> response) {
-                view.loadArticles(response.body().getArticles());
-            }
+    public void loadMore() {
+        if (page * 10 < totalPost) {
+            loadMore = true;
+            page++;
+            fetchAllArticles();
+        }
+    }
 
-            @Override
-            public void onFailure(Call<ArticleResponse> call, Throwable t) {
+    @Override
+    public void onResponse(Call<ArticleResponse> call, Response<ArticleResponse> response) {
+        if (loadMore) {
+            view.loadMoreArticles(response.body().getArticles());
+        } else {
+            totalPost = response.body().getTotalResults();
+            view.loadArticles(response.body().getArticles());
+        }
+    }
 
-            }
-        });
+    @Override
+    public void onFailure(Call<ArticleResponse> call, Throwable t) {
+
     }
 }
