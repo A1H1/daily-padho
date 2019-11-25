@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import in.devco.dailypadho.R;
 import in.devco.dailypadho.model.Article;
 import in.devco.dailypadho.utils.AppUtils;
 
+import static android.view.View.GONE;
 import static in.devco.dailypadho.utils.AppConst.INTENT_KEY_ARTICLE;
 
 public class ArticleDetails extends AppCompatActivity {
@@ -64,7 +66,12 @@ public class ArticleDetails extends AppCompatActivity {
         time.setText(article.getPublishedAt());
         source.setText(article.getSource().getName());
         content.setText(article.getContent());
-        Picasso.get().load(article.getImage()).into(image);
+
+        if (article.getImage() == null) {
+            image.setVisibility(GONE);
+        } else {
+            Picasso.get().load(article.getImage()).into(image);
+        }
     }
 
     private void setToolbar() {

@@ -4,12 +4,14 @@ import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 import in.devco.dailypadho.R;
 import in.devco.dailypadho.model.ArticleResponse;
 import in.devco.dailypadho.network.APIClient;
 import in.devco.dailypadho.network.APIService;
+import in.devco.dailypadho.utils.AppUtils;
 import in.devco.dailypadho.view.MainView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,7 +19,7 @@ import retrofit2.Response;
 
 import static in.devco.dailypadho.utils.AppConst.LOG_NETWORK;
 
-public class MainPresenter implements Callback<ArticleResponse> {
+public class FilterResultPresenter implements Callback<ArticleResponse> {
     private boolean loadMore = false;
 
     private int perPage = 10;
@@ -26,20 +28,36 @@ public class MainPresenter implements Callback<ArticleResponse> {
 
     private String countryCode;
     private String q;
+    private String language;
+    private String sortBy;
+
+    private List<String> sources;
 
     private MainView view;
     private APIService api;
 
-    public MainPresenter(MainView view, String countryCode) {
+    public FilterResultPresenter(MainView view) {
         this.view = view;
         this.countryCode = countryCode;
 
         api = APIClient.getClient().create(APIService.class);
     }
 
-    public void fetchAllArticles(String q) {
+    public void fetchAllArticles(String language, String sortBy, List<String> sources, String q) {
         this.q = q;
-        Call<ArticleResponse> call = api.getHeadlines(countryCode, null, null, q, perPage, page);
+        this.language = language;
+        this.sortBy = sortBy;
+        this.sources = sources;
+
+        String s;
+
+        if (sources == null || sources.isEmpty()) {
+            s = null;
+        } else {
+            s = AppUtils.stringListToString(sources);
+        }
+
+        Call<ArticleResponse> call = api.getArticles(q, null, s, null, null, language, sortBy, perPage, page);
         call.enqueue(this);
     }
 
@@ -47,18 +65,18 @@ public class MainPresenter implements Callback<ArticleResponse> {
         if (page * perPage < totalPost) {
             loadMore = true;
             page++;
-            fetchAllArticles(q);
+            fetchAllArticles(language, sortBy, sources, q);
         }
     }
 
     public void refresh() {
         reset();
-        fetchAllArticles(q);
+        fetchAllArticles(language, sortBy, sources, q);
     }
 
     public void search(String q) {
         reset();
-        fetchAllArticles(q);
+        fetchAllArticles(language, sortBy, sources, q);
     }
 
     private void reset() {

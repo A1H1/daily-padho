@@ -1,55 +1,81 @@
 package in.devco.dailypadho.fragment;
 
-import android.content.Context;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import in.devco.dailypadho.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FilterResult.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FilterResult#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class FilterResult extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import in.devco.dailypadho.R;
+import in.devco.dailypadho.activity.ArticleDetails;
+import in.devco.dailypadho.adapter.ArticleAdapter;
+import in.devco.dailypadho.listener.ScrollListener;
+import in.devco.dailypadho.model.Article;
+import in.devco.dailypadho.presenter.FilterResultPresenter;
+import in.devco.dailypadho.utils.AppUtils;
+import in.devco.dailypadho.view.MainView;
+import in.devco.dailypadho.widget.ViewLoadingDotsBounce;
+
+import static android.view.View.GONE;
+import static in.devco.dailypadho.utils.AppConst.INTENT_KEY_ARTICLE;
+
+public class FilterResult extends Fragment implements SearchView.OnQueryTextListener, ArticleAdapter.OnClickListener, ScrollListener.ScrollUpdate, SwipeRefreshLayout.OnRefreshListener, MainView {
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.recycler)
+    RecyclerView recyclerView;
+
+    @BindView(R.id.refresh)
+    SwipeRefreshLayout refreshLayout;
+
+    @BindView(R.id.loader)
+    ViewLoadingDotsBounce loader;
+
+    private ArticleAdapter adapter;
+    private FilterResultPresenter presenter;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM3 = "param3";
+    private static final String ARG_PARAM4 = "param4";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+    private String language;
+    private String sortBy;
+    private String q;
+    private List<String> sources;
 
     public FilterResult() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FilterResult.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FilterResult newInstance(String param1, String param2) {
+    static FilterResult newInstance(String language, String sortBy, List<String> sources, String q, String from, String to) {
         FilterResult fragment = new FilterResult();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, language);
+        args.putString(ARG_PARAM2, sortBy);
+        args.putStringArrayList(ARG_PARAM3, new ArrayList<>(sources));
+        args.putString(ARG_PARAM4, q);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,54 +84,113 @@ public class FilterResult extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            language = getArguments().getString(ARG_PARAM1);
+            sortBy = getArguments().getString(ARG_PARAM2);
+            sources = getArguments().getStringArrayList(ARG_PARAM3);
+            q = getArguments().getString(ARG_PARAM4);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_filter_result, container, false);
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+
+        SearchView searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setOnQueryTextListener(this);
+        searchView.setQueryHint(getResources().getString(R.string.search_hint));
+
+        AppUtils.changeMenuIconColor(menu, getResources().getColor(R.color.grey_60));
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_filter_result, container, false);
+        setHasOptionsMenu(true);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setToolbar();
+        init();
+    }
+
+    private void init() {
+        adapter = new ArticleAdapter(this);
+        presenter = new FilterResultPresenter(this);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setOnScrollListener(new ScrollListener(layoutManager, this));
+
+        presenter.fetchAllArticles(language, sortBy, sources, q);
+        refreshLayout.setOnRefreshListener(this);
+    }
+
+    private void setToolbar() {
+        if (getActivity() != null) {
+            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setTitle(R.string.news);
+            }
         }
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    public boolean onQueryTextSubmit(String query) {
+        return false;
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public boolean onQueryTextChange(String newText) {
+        presenter.search(newText);
+        return false;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    @Override
+    public void displayArticle(Article article) {
+        Intent intent = new Intent(getContext(), ArticleDetails.class);
+        intent.putExtra(INTENT_KEY_ARTICLE, new Gson().toJson(article));
+        startActivity(intent);
+    }
+
+    @Override
+    public void nextPage() {
+        presenter.loadMore();
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshLayout.setRefreshing(true);
+        presenter.refresh();
+    }
+
+    @Override
+    public void loadArticles(List<Article> articles) {
+        loader.setVisibility(GONE);
+        adapter.add(articles);
+        refreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void loadMoreArticles(List<Article> articles) {
+        adapter.update(articles);
+    }
+
+    @Override
+    public void error(int error) {
+        loader.setVisibility(GONE);
+        Snackbar.make(recyclerView, error, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.retry, v -> onRefresh())
+                .show();
     }
 }

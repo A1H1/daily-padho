@@ -1,4 +1,10 @@
 package in.devco.dailypadho.view;
 
-public interface SourceView {
+import java.util.List;
+
+import in.devco.dailypadho.model.Source;
+
+public interface FilterView {
+    void setSources(List<Source> sources);
+    void error(int error);
 }

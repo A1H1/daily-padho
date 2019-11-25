@@ -3,14 +3,10 @@ package in.devco.dailypadho.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,85 +14,88 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.devco.dailypadho.R;
-import in.devco.dailypadho.model.Article;
+import in.devco.dailypadho.model.Source;
 
-import static android.view.View.VISIBLE;
+public class SourceAdapter extends RecyclerView.Adapter<SourceAdapter.ViewHolder> {
+    private List<Source> sources;
+    private List<String> selectedSources;
+    private ClickListener clickListener;
 
-public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
-    private List<Article> articles;
-    private OnClickListener clickListener;
-
-    public interface OnClickListener {
-        void displayArticle(Article article);
+    public interface ClickListener {
+        void maxSources();
     }
 
-    public ArticleAdapter(OnClickListener clickListener) {
+    public SourceAdapter(ClickListener clickListener) {
         this.clickListener = clickListener;
 
-        articles = new ArrayList<>();
+        selectedSources = new ArrayList<>();
+        sources = new ArrayList<>();
     }
 
-    public void add(List<Article> articles) {
-        this.articles = articles;
+    public void add(List<Source> sources) {
+        this.sources = sources;
         notifyDataSetChanged();
     }
 
-    public void update(List<Article> articles) {
-        this.articles.addAll(articles);
-        notifyDataSetChanged();
+    public void setSelectedSources(List<String> selectedSources) {
+        this.selectedSources = selectedSources;
     }
 
-    public List<Article> get() {
-        return articles;
+    public List<String> get() {
+        return selectedSources;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_article, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_source, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder view, int position) {
-        Article article = articles.get(position);
-
-        view.title.setText(article.getTitle());
-        view.description.setText(article.getDescription());
-        view.source.setText(article.getSource().getName());
-
-        if (article.getImage() != null) {
-            view.image.setVisibility(VISIBLE);
-
-            Picasso.get()
-                    .load(article.getImage())
-                    .into(view.image);
+        if (selectedSources.contains(sources.get(position).getId())) {
+            view.source.setChecked(true);
         }
 
-        view.cardView.setOnClickListener(v -> clickListener.displayArticle(article));
+        view.source.setText(sources.get(position).getName());
+
+        view.source.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (!isChecked) {
+                selectedSources.remove(sources.get(position).getId());
+            } else {
+                if (selectedSources.size() < 21) {
+                    selectedSources.add(sources.get(position).getId());
+                } else {
+                    view.source.setChecked(false);
+                    clickListener.maxSources();
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return articles.size();
+        return sources.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.article_title)
-        TextView title;
-        @BindView(R.id.article_description)
-        TextView description;
-        @BindView(R.id.article_source)
-        TextView source;
-
-        @BindView(R.id.article_image)
-        ImageView image;
-
-        @BindView(R.id.article_container)
-        CardView cardView;
+        @BindView(R.id.source)
+        AppCompatCheckBox source;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
+
 }

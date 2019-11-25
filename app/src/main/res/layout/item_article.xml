@@ -8,7 +8,10 @@
     android:layout_marginTop="@dimen/spacing_xmedium"
     android:layout_marginEnd="@dimen/spacing_large"
     android:layout_marginBottom="@dimen/spacing_xmedium"
+    android:clickable="true"
     android:descendantFocusability="blocksDescendants"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="2dp"
     app:cardElevation="4dp">
 

@@ -1,4 +1,4 @@
-package com.material.components.widget;
+package in.devco.dailypadho.widget;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
@@ -8,19 +8,20 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.Nullable;
+
 /**
  * Use this view with width = height or width > height
  * EXAMPLE :
  * android:layout_width="50dp"
  * android:layout_height="30dp"
- *
+ * <p>
  * To change dot color you can use :
  * android:background="@color/exampleColor"
  */
@@ -33,7 +34,7 @@ public class ViewLoadingDotsBounce extends LinearLayout {
     private static final int OBJECT_SIZE = 3;
     private static final int POST_DIV = 6;
     private static final int DURATION = 500;
-    private ObjectAnimator animator[];
+    private ObjectAnimator[] animator;
 
     public ViewLoadingDotsBounce(Context context) {
         super(context);
@@ -115,8 +116,8 @@ public class ViewLoadingDotsBounce extends LinearLayout {
         animator = new ObjectAnimator[OBJECT_SIZE];
         for (int i = 0; i < OBJECT_SIZE; i++) {
             img[i].setTranslationY(getHeight() / POST_DIV);
-            PropertyValuesHolder Y = PropertyValuesHolder.ofFloat(img[i].TRANSLATION_Y, -getHeight() / POST_DIV);
-            PropertyValuesHolder X = PropertyValuesHolder.ofFloat(img[i].TRANSLATION_X, 0);
+            PropertyValuesHolder Y = PropertyValuesHolder.ofFloat(TRANSLATION_Y, -getHeight() / POST_DIV);
+            PropertyValuesHolder X = PropertyValuesHolder.ofFloat(TRANSLATION_X, 0);
             animator[i] = ObjectAnimator.ofPropertyValuesHolder(img[i], X, Y);
             animator[i].setRepeatCount(-1);
             animator[i].setRepeatMode(ValueAnimator.REVERSE);

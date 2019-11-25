@@ -4,4 +4,27 @@
     <string name="share">Share</string>
     <string name="search">Search</string>
     <string name="read_more">Read more</string>
+    <string name="search_hint">Search…</string>
+    <string name="sort_by">Sort by</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="sources">Sources</string>
+    <string name="none">None</string>
+    <string name="category">Category</string>
+    <string name="anytime">Anytime</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="filters">Filters</string>
+    <string name="published_at">Published At</string>
+    <string name="save">Save</string>
+    <string name="max_source">Maximum sources selected</string>
+    <string name="no_sources">No Sources</string>
+    <string name="filter">Filter</string>
+    <string name="top_headlines">Top Headlines</string>
+    <string name="query">Query</string>
+    <string name="news">News</string>
+    <string name="connection_problem">Connection problem</string>
+    <string name="retry">Retry</string>
+    <string name="something_wrong">Something went wrong</string>
+    <string name="no_source_found_change_language_or_category">No source found, change language or category</string>
 </resources>

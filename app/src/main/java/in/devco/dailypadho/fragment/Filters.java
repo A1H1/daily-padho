@@ -1,111 +1,209 @@
 package in.devco.dailypadho.fragment;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import in.devco.dailypadho.R;
+import in.devco.dailypadho.model.Source;
+import in.devco.dailypadho.presenter.FilterPresenter;
+import in.devco.dailypadho.view.FilterView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Filters.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Filters#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class Filters extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import static in.devco.dailypadho.utils.AppConst.CATEGORY;
+import static in.devco.dailypadho.utils.AppConst.LANGUAGES;
+import static in.devco.dailypadho.utils.AppConst.LANGUAGES_KEY;
+import static in.devco.dailypadho.utils.AppConst.SORTS;
+import static in.devco.dailypadho.utils.AppConst.SORTS_KEY;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class Filters extends Fragment implements FilterView, SourceSelect.CallbackResult {
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
-    private OnFragmentInteractionListener mListener;
+    @BindView(R.id.language)
+    TextView languageTV;
+    @BindView(R.id.sort_by)
+    TextView sortByTV;
+    @BindView(R.id.category)
+    TextView categoryTV;
+    @BindView(R.id.sources)
+    TextView sourcesTV;
+
+    @BindView(R.id.query)
+    EditText query;
+
+    private boolean update = false;
+
+    private String language = LANGUAGES_KEY[0];
+    private String sortBy = SORTS_KEY[0];
+    private String category = CATEGORY[0].toLowerCase();
+
+    private List<String> sources = new ArrayList<>();
+
+    private AlertDialog.Builder builder;
+    private FragmentManager fragmentManager;
+
+    private FilterPresenter presenter;
+    private SourceSelect fragment;
 
     public Filters() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Filters.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Filters newInstance(String param1, String param2) {
-        Filters fragment = new Filters();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_filters, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        setToolbar();
+        init();
+    }
+
+    private void init() {
+        presenter = new FilterPresenter(this);
+        fragmentManager = getFragmentManager();
+        fragment = new SourceSelect();
+        fragment.setOnCallbackResult(this);
+
+        if (getContext() != null) {
+            builder = new AlertDialog.Builder(getContext());
+            builder.setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss());
+            builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss());
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_filters, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    private void setToolbar() {
+        if (getActivity() != null) {
+            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setTitle(R.string.filters);
+            }
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+    @OnClick(R.id.filter_language)
+    void setLanguage() {
+        builder.setTitle(R.string.language);
+        builder.setSingleChoiceItems(LANGUAGES, Arrays.asList(LANGUAGES_KEY).indexOf(language), (dialogInterface, i) -> {
+            languageTV.setText(LANGUAGES[i]);
+            language = LANGUAGES_KEY[i];
+            update = true;
+            presenter.fetchSources(language, category);
+        });
+        builder.show();
+    }
+
+    @OnClick(R.id.filter_sort_by)
+    void setSortBy() {
+        builder.setTitle(R.string.sort_by);
+        builder.setSingleChoiceItems(SORTS, Arrays.asList(SORTS_KEY).indexOf(sortBy), (dialogInterface, i) -> {
+            sortByTV.setText(SORTS[i]);
+            sortBy = SORTS_KEY[i];
+        });
+        builder.show();
+    }
+
+    @OnClick(R.id.filter_category)
+    void setCategory() {
+        builder.setTitle(R.string.category);
+        builder.setSingleChoiceItems(CATEGORY, Arrays.asList(CATEGORY).indexOf(category.substring(0, 1).toUpperCase() + category.substring(1)), (dialogInterface, i) -> {
+            categoryTV.setText(CATEGORY[i]);
+            category = CATEGORY[i].toLowerCase();
+            update = true;
+            presenter.fetchSources(language, category);
+        });
+        builder.show();
+    }
+
+    @OnClick(R.id.filter_sources)
+    void setSources() {
+        fragment.setSelectedSources(sources);
+        presenter.fetchSources(language, category);
+        if (fragmentManager != null) {
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            transaction.add(android.R.id.content, fragment).addToBackStack(null).commit();
+        }
+    }
+
+    @OnClick(R.id.filter)
+    void filter() {
+        if (sources.isEmpty() && query.getText().toString().equals("")) {
+            Toast.makeText(getContext(), "Please enter or select source", Toast.LENGTH_LONG).show();
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            if (fragmentManager != null) {
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                transaction.replace(android.R.id.content, FilterResult.newInstance(language, sortBy, sources, query.getText().toString(), null, null)).addToBackStack(null).commit();
+            }
         }
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void selectedSources(List<String> sources) {
+        this.sources = sources;
+        String s = "";
+
+        if (sources == null || sources.isEmpty()) {
+            sourcesTV.setText(R.string.none);
+        } else if (sources.size() == 1) {
+            s = String.format(Locale.getDefault(), "%d Source", sources.size());
+        } else {
+            s = String.format(Locale.getDefault(), "%d Sources", sources.size());
+        }
+        sourcesTV.setText(s);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    @Override
+    public void refresh() {
+        presenter.fetchSources(language, category);
+    }
+
+    @Override
+    public void setSources(List<Source> sources) {
+        if (update) {
+            update = false;
+            this.sources = new ArrayList<>();
+            if (sources == null || sources.isEmpty()) {
+                sourcesTV.setText(R.string.no_sources);
+            } else {
+                sourcesTV.setText(R.string.none);
+            }
+        } else {
+            fragment.setSources(sources);
+        }
+    }
+
+    @Override
+    public void error(int error) {
+        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
     }
 }
