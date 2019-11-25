@@ -157,7 +157,7 @@ public class Filters extends Fragment implements FilterView, SourceSelect.Callba
     @OnClick(R.id.filter)
     void filter() {
         if (sources.isEmpty() && query.getText().toString().equals("")) {
-            Toast.makeText(getContext(), "Please enter or select source", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), R.string.enter_query_source, Toast.LENGTH_LONG).show();
         } else {
             if (fragmentManager != null) {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();

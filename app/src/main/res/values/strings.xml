@@ -27,4 +27,5 @@
     <string name="retry">Retry</string>
     <string name="something_wrong">Something went wrong</string>
     <string name="no_source_found_change_language_or_category">No source found, change language or category</string>
+    <string name="enter_query_source">Please enter query or select source</string>
 </resources>
