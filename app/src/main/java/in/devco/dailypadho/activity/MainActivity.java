@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
 
@@ -26,15 +27,21 @@ import in.devco.dailypadho.view.MainView;
 
 import static in.devco.dailypadho.utils.AppConst.INTENT_KEY_ARTICLE;
 
-public class MainActivity extends AppCompatActivity implements MainView, ScrollListener.ScrollUpdate, ArticleAdapter.OnClickListener, SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity implements MainView, ScrollListener.ScrollUpdate, ArticleAdapter.OnClickListener, SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.main_recycler)
     RecyclerView recyclerView;
+
+    @BindView(R.id.main_refresh)
+    SwipeRefreshLayout refreshLayout;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
+    private boolean isSearching = false;
+
     private MainPresenter presenter;
     private ArticleAdapter adapter;
+    private List<Article> headlines;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
         recyclerView.setOnScrollListener(new ScrollListener(layoutManager, this));
 
         presenter.fetchAllArticles();
+        refreshLayout.setOnRefreshListener(this);
     }
 
     private void setToolbar() {
@@ -82,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
     @Override
     public void loadArticles(List<Article> articles) {
         adapter.add(articles);
+        refreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -107,7 +116,26 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
     }
 
     @Override
-    public boolean onQueryTextChange(String newText) {
+    public boolean onQueryTextChange(String q) {
+        if (!isSearching) {
+            headlines = adapter.get();
+        }
+
+        if (q == null || q.isEmpty()) {
+            presenter.resetSearch();
+            adapter.add(headlines);
+            isSearching = false;
+            return false;
+        }
+
+        isSearching = true;
+        presenter.search(q);
+
         return false;
+    }
+
+    @Override
+    public void onRefresh() {
+        presenter.refresh();
     }
 }
