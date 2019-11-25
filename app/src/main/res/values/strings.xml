@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Daily Padho</string>
     <string name="article_image">Article Image</string>
+    <string name="share">Share</string>
+    <string name="search">Search</string>
+    <string name="read_more">Read more</string>
 </resources>

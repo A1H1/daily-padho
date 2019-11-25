@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -23,8 +24,15 @@ import static android.view.View.VISIBLE;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
     private List<Article> articles;
+    private OnClickListener clickListener;
 
-    public ArticleAdapter() {
+    public interface OnClickListener {
+        void displayArticle(Article article);
+    }
+
+    public ArticleAdapter(OnClickListener clickListener) {
+        this.clickListener = clickListener;
+
         articles = new ArrayList<>();
     }
 
@@ -36,6 +44,10 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     public void update(List<Article> articles) {
         this.articles.addAll(articles);
         notifyDataSetChanged();
+    }
+
+    public List<Article> get() {
+        return articles;
     }
 
     @NonNull
@@ -59,6 +71,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
                     .load(article.getImage())
                     .into(view.image);
         }
+
+        view.cardView.setOnClickListener(v -> clickListener.displayArticle(article));
     }
 
     @Override
@@ -76,6 +90,9 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
         @BindView(R.id.article_image)
         ImageView image;
+
+        @BindView(R.id.article_container)
+        CardView cardView;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
