@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +31,7 @@ import butterknife.OnClick;
 import in.devco.dailypadho.R;
 import in.devco.dailypadho.model.Source;
 import in.devco.dailypadho.presenter.FilterPresenter;
+import in.devco.dailypadho.utils.AppUtils;
 import in.devco.dailypadho.view.FilterView;
 
 import static in.devco.dailypadho.utils.AppConst.CATEGORY;
@@ -40,6 +43,9 @@ import static in.devco.dailypadho.utils.AppConst.SORTS_KEY;
 public class Filters extends Fragment implements FilterView, SourceSelect.CallbackResult {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.adView)
+    AdView mAdView;
 
     @BindView(R.id.language)
     TextView languageTV;
@@ -80,12 +86,13 @@ public class Filters extends Fragment implements FilterView, SourceSelect.Callba
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        setToolbar();
         init();
     }
 
     private void init() {
+        setToolbar();
+        AppUtils.loadAds(getContext(), mAdView);
+
         presenter = new FilterPresenter(this);
         fragmentManager = getFragmentManager();
         fragment = new SourceSelect();

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
 
+    @BindView(R.id.adView)
+    AdView mAdView;
+
     @BindView(R.id.refresh)
     SwipeRefreshLayout refreshLayout;
 
@@ -58,13 +62,13 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
         init();
     }
 
     private void init() {
         setToolbar();
         intro();
+        AppUtils.loadAds(this, mAdView);
 
         presenter = new MainPresenter(this, getResources().getConfiguration().locale.getCountry().toLowerCase());
         adapter = new ArticleAdapter(this);

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@android:color/white"
+    android:orientation="vertical"
     tools:context=".fragment.FilterResult">
 
     <include layout="@layout/layout_toolbar" />
@@ -12,4 +12,11 @@
     <include layout="@layout/layout_recycler" />
 
     <include layout="@layout/layout_loader" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/layout_ads" />
+    </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -38,6 +38,9 @@ public class ArticleDetails extends AppCompatActivity {
     @BindView(R.id.article_details_content)
     TextView content;
 
+    @BindView(R.id.adView)
+    AdView mAdView;
+
     @BindView(R.id.article_details_image)
     ImageView image;
 
@@ -50,14 +53,13 @@ public class ArticleDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_details);
-
         ButterKnife.bind(this);
-
         init();
     }
 
     private void init() {
         setToolbar();
+        AppUtils.loadAds(this, mAdView);
 
         article = new Gson().fromJson(getIntent().getStringExtra(INTENT_KEY_ARTICLE), Article.class);
 

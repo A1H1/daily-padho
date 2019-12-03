@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
@@ -43,6 +44,9 @@ import static in.devco.dailypadho.utils.AppConst.INTENT_KEY_ARTICLE;
 public class FilterResult extends Fragment implements SearchView.OnQueryTextListener, ArticleAdapter.OnClickListener, ScrollListener.ScrollUpdate, SwipeRefreshLayout.OnRefreshListener, MainView {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.adView)
+    AdView mAdView;
 
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
@@ -116,11 +120,13 @@ public class FilterResult extends Fragment implements SearchView.OnQueryTextList
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setToolbar();
         init();
     }
 
     private void init() {
+        setToolbar();
+        AppUtils.loadAds(getContext(), mAdView);
+
         adapter = new ArticleAdapter(this);
         presenter = new FilterResultPresenter(this);
 
