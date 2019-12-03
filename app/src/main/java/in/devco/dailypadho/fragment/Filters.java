@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.android.gms.ads.InterstitialAd;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +47,11 @@ import static in.devco.dailypadho.utils.AppConst.SORTS_KEY;
 public class Filters extends Fragment implements FilterView, SourceSelect.CallbackResult {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.adView)
+    AdView mAdView;
+
+    private InterstitialAd mInterstitialAd;
 
     @BindView(R.id.language)
     TextView languageTV;
@@ -75,6 +87,8 @@ public class Filters extends Fragment implements FilterView, SourceSelect.Callba
         View view = inflater.inflate(R.layout.fragment_filters, container, false);
         ButterKnife.bind(this, view);
         return view;
+
+
     }
 
     @Override
@@ -90,6 +104,17 @@ public class Filters extends Fragment implements FilterView, SourceSelect.Callba
         fragmentManager = getFragmentManager();
         fragment = new SourceSelect();
         fragment.setOnCallbackResult(this);
+
+        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+
 
         if (getContext() != null) {
             builder = new AlertDialog.Builder(getContext());
