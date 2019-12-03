@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@android:color/white"
+    android:orientation="vertical"
     tools:context=".fragment.FilterResult">
 
     <include layout="@layout/layout_toolbar" />
@@ -12,19 +12,11 @@
     <include layout="@layout/layout_recycler" />
 
     <include layout="@layout/layout_loader" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.google.android.gms.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/adView"
-            android:layout_width="wrap_content"
 
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_height="wrap_content"
-            ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
-        </com.google.android.gms.ads.AdView>
+        <include layout="@layout/layout_ads" />
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

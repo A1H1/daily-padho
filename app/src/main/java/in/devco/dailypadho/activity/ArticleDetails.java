@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,11 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -36,14 +31,15 @@ public class ArticleDetails extends AppCompatActivity {
     TextView title;
     @BindView(R.id.article_details_details)
     TextView details;
-    @BindView(R.id.adView)
-    AdView mAdView;
     @BindView(R.id.article_details_time)
     TextView time;
     @BindView(R.id.article_details_source)
     TextView source;
     @BindView(R.id.article_details_content)
     TextView content;
+
+    @BindView(R.id.adView)
+    AdView mAdView;
 
     @BindView(R.id.article_details_image)
     ImageView image;
@@ -57,21 +53,13 @@ public class ArticleDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_details);
-
         ButterKnife.bind(this);
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
         init();
     }
 
     private void init() {
         setToolbar();
+        AppUtils.loadAds(this, mAdView);
 
         article = new Gson().fromJson(getIntent().getStringExtra(INTENT_KEY_ARTICLE), Article.class);
 

@@ -1,4 +1,10 @@
 <resources>
+    <!--ads key-->
+    <string name="banner_debug">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="banner_release">ca-app-pub-9304335491370375/9196368941</string>
+    <string name="interstitial_debug">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="interstitial_release">ca-app-pub-9304335491370375/2818980089</string>
+
     <string name="app_name">Daily Padho</string>
     <string name="article_image">Article Image</string>
     <string name="share">Share</string>

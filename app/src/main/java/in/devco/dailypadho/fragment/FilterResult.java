@@ -19,12 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
@@ -64,7 +59,6 @@ public class FilterResult extends Fragment implements SearchView.OnQueryTextList
 
     private ArticleAdapter adapter;
     private FilterResultPresenter presenter;
-    private InterstitialAd mInterstitialAd;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -99,18 +93,7 @@ public class FilterResult extends Fragment implements SearchView.OnQueryTextList
             sources = getArguments().getStringArrayList(ARG_PARAM3);
             q = getArguments().getString(ARG_PARAM4);
         }
-        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-
-
     }
-
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -137,11 +120,13 @@ public class FilterResult extends Fragment implements SearchView.OnQueryTextList
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setToolbar();
         init();
     }
 
     private void init() {
+        setToolbar();
+        AppUtils.loadAds(getContext(), mAdView);
+
         adapter = new ArticleAdapter(this);
         presenter = new FilterResultPresenter(this);
 
