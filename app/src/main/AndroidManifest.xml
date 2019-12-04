@@ -12,9 +12,7 @@
         android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.FilterArticle" />
-        <activity android:name=".activity.ArticleDetails" />
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -22,10 +20,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.FilterArticle" />
+        <activity android:name=".activity.ArticleDetails" />
+        <activity android:name=".activity.MainActivity" />
 
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9304335491370375~1701022307" />
     </application>
 
 </manifest>
