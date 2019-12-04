@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         init();
-
     }
 
     private void init() {
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-        recyclerView.setOnScrollListener(new ScrollListener(layoutManager, this));
+        recyclerView.addOnScrollListener(new ScrollListener(layoutManager, this));
 
         presenter.fetchAllArticles(null);
         refreshLayout.setOnRefreshListener(this);

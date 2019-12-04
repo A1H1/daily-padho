@@ -134,7 +134,7 @@ public class FilterResult extends Fragment implements SearchView.OnQueryTextList
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-        recyclerView.setOnScrollListener(new ScrollListener(layoutManager, this));
+        recyclerView.addOnScrollListener(new ScrollListener(layoutManager, this));
 
         presenter.fetchAllArticles(language, sortBy, sources, q);
         refreshLayout.setOnRefreshListener(this);
