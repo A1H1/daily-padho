@@ -1,19 +1,17 @@
 package `in`.devco.dailypadho.utils
 
-import `in`.devco.dailypadho.utils.SharedPref.SharedPref.getClickCount
-import `in`.devco.dailypadho.utils.SharedPref.SharedPref.resetClickCount
-import `in`.devco.dailypadho.utils.SharedPref.SharedPref.setClickCount
+import `in`.devco.dailypadho.utils.SharedPref.getClickCount
+import `in`.devco.dailypadho.utils.SharedPref.resetClickCount
+import `in`.devco.dailypadho.utils.SharedPref.setClickCount
+import android.content.Context
 
-
-class AdUtils {
-
-    object AdUtils {
-        fun showAd() {
-            SharedPref.setClickCount
-            if(SharedPref.getClickCount > 3) {
-                SharedPref.resetClickCount
-                //display ad
-            }
+object AdUtils {
+    fun showAd(context: Context) {
+        if (getClickCount(context) > 3) {
+            resetClickCount(context)
+            //display ad
+        } else {
+            setClickCount(context)
         }
     }
 }
