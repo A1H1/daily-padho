@@ -11,14 +11,14 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.InterstitialAd
 
 
-class AdUtils {
+object AdUtils {
 
-    companion object {
+
         @JvmStatic fun showAd(context: Context) {
             if (getClickCount(context) > 3) {
                 resetClickCount(context)
                 val interstitialAd = InterstitialAd(context)
-                interstitialAd.adUnitId = context.getString(R.string.interstitial_debug)
+                interstitialAd.adUnitId = context.getString(R.string.interstitial_release)
                 interstitialAd.loadAd(AdRequest.Builder().build())
                 interstitialAd.adListener = object : AdListener() {
                     override fun onAdLoaded() {
@@ -35,6 +35,6 @@ class AdUtils {
         }
     }
 
-}
+
 
 
