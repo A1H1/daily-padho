@@ -1,9 +1,19 @@
 package in.devco.dailypadho.utils;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.view.Menu;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 
@@ -13,7 +23,9 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.List;
+import java.util.Objects;
 
+import in.devco.dailypadho.BuildConfig;
 import in.devco.dailypadho.R;
 
 public class AppUtils {
@@ -42,7 +54,7 @@ public class AppUtils {
     public static void loadAds(Context context, AdView adView) {
         adView.loadAd(new AdRequest.Builder().build());
         InterstitialAd interstitialAd = new InterstitialAd(context);
-        interstitialAd.setAdUnitId(context.getString(R.string.interstitial_debug));
+        interstitialAd.setAdUnitId(context.getString(R.string.interstitial_release));
         interstitialAd.loadAd(new AdRequest.Builder().build());
         interstitialAd.setAdListener(new AdListener() {
             @Override
@@ -50,5 +62,25 @@ public class AppUtils {
                 interstitialAd.show();
             }
         });
+    }
+
+    public static void about(Context context) {
+        Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_about);
+        dialog.setCancelable(true);
+        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        ((TextView) dialog.findViewById(R.id.about_version)).setText(String.format("Version %s", BuildConfig.VERSION_NAME));
+
+        dialog.findViewById(R.id.about_close).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
     }
 }

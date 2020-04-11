@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -107,6 +108,14 @@ public class FilterResult extends Fragment implements SearchView.OnQueryTextList
         AppUtils.changeMenuIconColor(menu, getResources().getColor(R.color.grey_60));
 
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_about) {
+            AppUtils.about(getContext());
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
