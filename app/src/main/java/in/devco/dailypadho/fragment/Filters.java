@@ -31,6 +31,7 @@ import butterknife.OnClick;
 import in.devco.dailypadho.R;
 import in.devco.dailypadho.model.Source;
 import in.devco.dailypadho.presenter.FilterPresenter;
+import in.devco.dailypadho.utils.AdUtils;
 import in.devco.dailypadho.utils.AppUtils;
 import in.devco.dailypadho.view.FilterView;
 
@@ -91,7 +92,8 @@ public class Filters extends Fragment implements FilterView, SourceSelect.Callba
 
     private void init() {
         setToolbar();
-        AppUtils.loadAds(getContext(), mAdView);
+        AdUtils.bannerAds(getContext(), mAdView);
+        AdUtils.showAd(requireContext());
 
         presenter = new FilterPresenter(this);
         fragmentManager = getFragmentManager();

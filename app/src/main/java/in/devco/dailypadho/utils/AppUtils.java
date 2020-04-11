@@ -39,16 +39,5 @@ public class AppUtils {
         return r.toString();
     }
 
-    public static void loadAds(Context context, AdView adView) {
-        adView.loadAd(new AdRequest.Builder().build());
-        InterstitialAd interstitialAd = new InterstitialAd(context);
-        interstitialAd.setAdUnitId(context.getString(R.string.interstitial_debug));
-        interstitialAd.loadAd(new AdRequest.Builder().build());
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                interstitialAd.show();
-            }
-        });
-    }
+
 }

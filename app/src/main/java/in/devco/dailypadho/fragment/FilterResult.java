@@ -34,6 +34,7 @@ import in.devco.dailypadho.adapter.ArticleAdapter;
 import in.devco.dailypadho.listener.ScrollListener;
 import in.devco.dailypadho.model.Article;
 import in.devco.dailypadho.presenter.FilterResultPresenter;
+import in.devco.dailypadho.utils.AdUtils;
 import in.devco.dailypadho.utils.AppUtils;
 import in.devco.dailypadho.view.MainView;
 import in.devco.dailypadho.widget.ViewLoadingDotsBounce;
@@ -99,7 +100,7 @@ public class FilterResult extends Fragment implements SearchView.OnQueryTextList
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
 
-        SearchView searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(this);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
@@ -125,7 +126,10 @@ public class FilterResult extends Fragment implements SearchView.OnQueryTextList
 
     private void init() {
         setToolbar();
-        AppUtils.loadAds(getContext(), mAdView);
+        AdUtils.bannerAds(getContext(), mAdView);
+        AdUtils.showAd(requireContext());
+
+
 
         adapter = new ArticleAdapter(this);
         presenter = new FilterResultPresenter(this);

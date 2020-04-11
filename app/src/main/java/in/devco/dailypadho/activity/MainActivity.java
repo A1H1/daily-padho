@@ -27,6 +27,7 @@ import in.devco.dailypadho.adapter.ArticleAdapter;
 import in.devco.dailypadho.listener.ScrollListener;
 import in.devco.dailypadho.model.Article;
 import in.devco.dailypadho.presenter.MainPresenter;
+import in.devco.dailypadho.utils.AdUtils;
 import in.devco.dailypadho.utils.AppUtils;
 import in.devco.dailypadho.view.MainView;
 import in.devco.dailypadho.widget.ViewLoadingDotsBounce;
@@ -57,18 +58,22 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
     private MainPresenter presenter;
     private ArticleAdapter adapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+
         init();
     }
 
     private void init() {
         setToolbar();
         intro();
-        AppUtils.loadAds(this, mAdView);
+        AdUtils.bannerAds(this, mAdView);
+        AdUtils.showAd(this);
 
         presenter = new MainPresenter(this, getResources().getConfiguration().locale.getCountry().toLowerCase());
         adapter = new ArticleAdapter(this);
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        SearchView searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(this);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
