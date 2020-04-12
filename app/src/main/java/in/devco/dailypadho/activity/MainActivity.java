@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -118,6 +120,14 @@ public class MainActivity extends AppCompatActivity implements MainView, ScrollL
 
         AppUtils.changeMenuIconColor(menu, getResources().getColor(R.color.grey_60));
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_about) {
+            AppUtils.about(this);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
