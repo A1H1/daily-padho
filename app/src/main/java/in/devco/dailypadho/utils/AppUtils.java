@@ -2,17 +2,12 @@ package in.devco.dailypadho.utils;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.view.Menu;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -51,19 +46,6 @@ public class AppUtils {
         return r.toString();
     }
 
-    public static void loadAds(Context context, AdView adView) {
-        adView.loadAd(new AdRequest.Builder().build());
-        InterstitialAd interstitialAd = new InterstitialAd(context);
-        interstitialAd.setAdUnitId(context.getString(R.string.interstitial_release));
-        interstitialAd.loadAd(new AdRequest.Builder().build());
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                interstitialAd.show();
-            }
-        });
-    }
-
     public static void about(Context context) {
         Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -83,4 +65,6 @@ public class AppUtils {
         dialog.show();
         dialog.getWindow().setAttributes(lp);
     }
+
+
 }

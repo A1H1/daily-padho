@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "667273030243",
+    "firebase_url": "https://daily-padho.firebaseio.com",
+    "project_id": "daily-padho",
+    "storage_bucket": "daily-padho.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667273030243:android:ccda154a1d41ac5a8f2656",
+        "android_client_info": {
+          "package_name": "in.devco.dailypadho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "667273030243-do4ce1llfb0soctpqf5kdvh2tmqcimr5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRipyoY-QLeQDZQXpss769GtyexWPc-ZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "667273030243-do4ce1llfb0soctpqf5kdvh2tmqcimr5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

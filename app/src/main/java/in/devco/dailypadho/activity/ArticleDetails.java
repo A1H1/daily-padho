@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.devco.dailypadho.R;
 import in.devco.dailypadho.model.Article;
+import in.devco.dailypadho.utils.AdUtils;
 import in.devco.dailypadho.utils.AppUtils;
 
 import static android.view.View.GONE;
@@ -59,7 +60,8 @@ public class ArticleDetails extends AppCompatActivity {
 
     private void init() {
         setToolbar();
-        AppUtils.loadAds(this, mAdView);
+        AdUtils.showAd(this);
+        AdUtils.bannerAds(this,mAdView);
 
         article = new Gson().fromJson(getIntent().getStringExtra(INTENT_KEY_ARTICLE), Article.class);
 
